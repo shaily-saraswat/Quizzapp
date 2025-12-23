@@ -18,7 +18,7 @@ export default async function authMiddleware(req,res,next)
    // verify 
    try {
       const payload = jwt.verify(token,JWT_SECRET);
-      const user = await User.findById(payload.id).select('-password');
+      const user = await User.findById(payload.id).select('_id');
 
       if(!user){
          return res.status(401).json({
@@ -27,7 +27,8 @@ export default async function authMiddleware(req,res,next)
         });
       }
 
-      req.user = user;
+      //req.user = user;
+      req.user = { id: user._id.toString() };
       next();
    } catch (error) {
       console.error('JWT Verification failed ',error);
